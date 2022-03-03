@@ -33,10 +33,14 @@ namespace MassTransitSample.RabbitMqConsumer
                         h.Password("guest");
                     });
 
+                    cfg.Message<RabbitMqMessage>(c =>
+                    {
+                        c.SetEntityName(RabbitMqQueues.Queue1);
+                    });
 
                     cfg.ReceiveEndpoint(RabbitMqQueues.Queue1, e =>
                     {
-                        e.ConcurrentMessageLimit = 3;
+                        //e.ConcurrentMessageLimit = 3;
                         e.Durable = true;
                         e.ExchangeType = ExchangeType.Fanout;
                         e.Consumer<RabbitMqMessageConsumer>(ctx);
