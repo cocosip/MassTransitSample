@@ -29,9 +29,10 @@ public class Program
             await Host.CreateDefaultBuilder(args)
                 .ConfigureServices(services =>
                 {
-                    services.AddHostedService<MassTransitSampleKafkaConsumerHostedService>();
+                    services.AddApplication<MassTransitSampleKafkaConsumerModule>();
                 })
                 .UseSerilog()
+                .UseAutofac()
                 .RunConsoleAsync();
 
             return 0;

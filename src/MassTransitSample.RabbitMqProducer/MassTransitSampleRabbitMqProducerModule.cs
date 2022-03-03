@@ -1,22 +1,22 @@
 ﻿using MassTransit;
-using MassTransit.KafkaIntegration;
 using MassTransitSample.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
 
-namespace MassTransitSample.KafkaProducer
+namespace MassTransitSample.RabbitMqProducer
 {
     [DependsOn(
-        typeof(MassTransitSampleCommonModule),
-        typeof(AbpAutofacModule)
-        )]
-    public class MassTransitSampleKafkaProducerModule : AbpModule
+          typeof(MassTransitSampleCommonModule),
+          typeof(AbpAutofacModule)
+          )]
+    public class MassTransitSampleRabbitMqProducerModule : AbpModule
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
@@ -25,36 +25,35 @@ namespace MassTransitSample.KafkaProducer
 
             context.Services.AddMassTransit(x =>
             {
-                x.UsingInMemory((ctx, cfg) =>
+                x.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.ConcurrentMessageLimit = 100;
-                    cfg.ConfigureEndpoints(ctx);
-                });
-
-                x.AddRider(rider =>
-                {
-                    rider.AddProducer<string, KafkaMessage>(KafkaTopics.Topic1);
-
-                    rider.UsingKafka((context, k) =>
+                    cfg.Host("192.168.0.50", 5672, "/", h =>
                     {
-                        k.Host("192.168.0.50:9092");
-
-                        k.ConfigureSocket(s =>
-                        {
-                            s.KeepaliveEnable = true;
-                        });
+                        h.Username("guest");
+                        h.Password("guest");
                     });
 
+                    cfg.Message<RabbitMqMessage>(c =>
+                    {
+                        c.SetEntityName(RabbitMqQueues.Queue1);
+                    });
+
+                    cfg.Publish<RabbitMqMessage>(c =>
+                    {
+                        c.Durable = true;
+                        c.ExchangeType = ExchangeType.Fanout;
+                        c.AutoDelete = false;
+                    });
                 });
             }).AddMassTransitHostedService(true);
 
-            context.Services.AddHostedService<MassTransitSampleKafkaProducerHostedService>();
+            context.Services.AddHostedService<MassTransitSampleRabbitMqProducerHostedService>();
         }
 
 
         public override Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
         {
-            var logger = context.ServiceProvider.GetRequiredService<ILogger<MassTransitSampleKafkaProducerModule>>();
+            var logger = context.ServiceProvider.GetRequiredService<ILogger<MassTransitSampleRabbitMqProducerModule>>();
             var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
             var hostEnvironment = context.ServiceProvider.GetRequiredService<IHostEnvironment>();
             logger.LogInformation($"EnvironmentName => {hostEnvironment.EnvironmentName}");

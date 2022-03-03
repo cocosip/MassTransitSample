@@ -45,7 +45,7 @@ namespace MassTransitSample.KafkaConsumer
                         {
                             e.MaxPollInterval = TimeSpan.FromMilliseconds(600000);
                             e.SessionTimeout = TimeSpan.FromSeconds(300);
-                            e.ConcurrentMessageLimit = 3;
+                            e.ConcurrentMessageLimit = 1;
                             e.AutoOffsetReset = AutoOffsetReset.Earliest;
                             e.CheckpointInterval = TimeSpan.FromSeconds(20);
                             e.ConfigureConsumer<KafkaMessageConsumer>(context);
@@ -54,6 +54,8 @@ namespace MassTransitSample.KafkaConsumer
 
                 });
             }).AddMassTransitHostedService(true);
+
+            context.Services.AddHostedService<MassTransitSampleKafkaConsumerHostedService>();
         }
 
         public override Task OnApplicationInitializationAsync(ApplicationInitializationContext context)

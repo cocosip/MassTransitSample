@@ -1,4 +1,4 @@
-﻿using MassTransitSample.KafkaProducer;
+﻿using MassTransitSample.RabbitMqProducer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -29,7 +29,7 @@ public class Program
             await Host.CreateDefaultBuilder(args)
                 .ConfigureServices(services =>
                 {
-                    services.AddApplication<MassTransitSampleKafkaProducerModule>();
+                    services.AddApplication<MassTransitSampleRabbitMqProducerModule>();
                 })
                 .UseSerilog()
                 .UseAutofac()

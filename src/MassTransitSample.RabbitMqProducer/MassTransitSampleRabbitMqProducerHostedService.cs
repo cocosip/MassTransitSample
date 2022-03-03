@@ -5,27 +5,27 @@ using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 
-namespace MassTransitSample.KafkaProducer
+namespace MassTransitSample.RabbitMqProducer
 {
-    public class MassTransitSampleKafkaProducerHostedService : IHostedService
+    public class MassTransitSampleRabbitMqProducerHostedService : IHostedService
     {
         private IAbpApplicationWithExternalServiceProvider _abpApplication;
         private readonly IServiceProvider _serviceProvider;
-        private readonly KafkaProducerService _kafkaProducerService;
+        private readonly RabbitMqProducerService _rabbitMqProducerService;
 
         private readonly IConfiguration _configuration;
         private readonly IHostEnvironment _hostEnvironment;
 
-        public MassTransitSampleKafkaProducerHostedService(
+        public MassTransitSampleRabbitMqProducerHostedService(
             IAbpApplicationWithExternalServiceProvider abpApplication,
             IServiceProvider serviceProvider,
-            KafkaProducerService kafkaProducerService,
+            RabbitMqProducerService rabbitMqProducerService,
             IConfiguration configuration,
             IHostEnvironment hostEnvironment)
         {
             _abpApplication = abpApplication;
             _serviceProvider = serviceProvider;
-            _kafkaProducerService = kafkaProducerService;
+            _rabbitMqProducerService = rabbitMqProducerService;
 
             _configuration = configuration;
             _hostEnvironment = hostEnvironment;
@@ -35,7 +35,7 @@ namespace MassTransitSample.KafkaProducer
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             await _abpApplication.InitializeAsync(_serviceProvider);
-            _kafkaProducerService.Run();
+            _rabbitMqProducerService.Run();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -43,5 +43,4 @@ namespace MassTransitSample.KafkaProducer
             await _abpApplication.ShutdownAsync();
         }
     }
-
 }
