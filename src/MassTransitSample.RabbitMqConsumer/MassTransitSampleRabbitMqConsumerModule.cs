@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using System;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Autofac;
@@ -35,13 +36,17 @@ namespace MassTransitSample.RabbitMqConsumer
 
                     cfg.Message<RabbitMqMessage>(c =>
                     {
-                        c.SetEntityName(RabbitMqQueues.Queue1);
+                        c.SetEntityName(RabbitMqQueues.Exchange1);
                     });
 
                     cfg.ReceiveEndpoint(RabbitMqQueues.Queue1, e =>
                     {
-                        //e.ConcurrentMessageLimit = 3;
+                        //e.Bind(RabbitMqQueues.Exchange1);
+                        e.ConcurrentMessageLimit = 1;
+                        e.QueueExpiration = TimeSpan.FromSeconds(300);
+                        e.PrefetchCount = 10;
                         e.Durable = true;
+                        e.AutoDelete = false;
                         e.ExchangeType = ExchangeType.Fanout;
                         e.Consumer<RabbitMqMessageConsumer>(ctx);
                     });

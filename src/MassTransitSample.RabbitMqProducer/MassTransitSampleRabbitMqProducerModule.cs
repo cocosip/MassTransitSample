@@ -35,7 +35,7 @@ namespace MassTransitSample.RabbitMqProducer
 
                     cfg.Message<RabbitMqMessage>(c =>
                     {
-                        c.SetEntityName(RabbitMqQueues.Queue1);
+                        c.SetEntityName(RabbitMqQueues.Exchange1);
                     });
 
                     cfg.Publish<RabbitMqMessage>(c =>
