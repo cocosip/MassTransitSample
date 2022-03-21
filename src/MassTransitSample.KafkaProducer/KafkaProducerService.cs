@@ -1,4 +1,5 @@
-﻿using MassTransit.KafkaIntegration;
+﻿using MassTransit;
+using MassTransit.KafkaIntegration;
 using MassTransitSample.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

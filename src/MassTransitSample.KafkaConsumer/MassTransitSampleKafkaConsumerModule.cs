@@ -53,7 +53,22 @@ namespace MassTransitSample.KafkaConsumer
                     });
 
                 });
-            }).AddMassTransitHostedService(true);
+            });
+
+            context.Services
+                .Configure<MassTransitHostOptions>(options =>
+                {
+                    // if specified, waits until the bus is started before
+                    // returning from IHostedService.StartAsync
+                    // default is false
+                    options.WaitUntilStarted = true;
+
+                    // if specified, limits the wait time when starting the bus
+                    options.StartTimeout = TimeSpan.FromSeconds(10);
+
+                    // if specified, limits the wait time when stopping the bus
+                    options.StopTimeout = TimeSpan.FromSeconds(30);
+                });
 
             context.Services.AddHostedService<MassTransitSampleKafkaConsumerHostedService>();
         }
