@@ -5,9 +5,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.Timing" Version="5.1.4" />
-		<PackageReference Include="Volo.Abp.Threading" Version="5.1.4" />
-		<PackageReference Include="MassTransit" Version="8.0.0" />
+		<PackageReference Include="Volo.Abp.Timing" Version="7.0.0" />
+		<PackageReference Include="Volo.Abp.Threading" Version="7.0.0" />
+		<PackageReference Include="MassTransit" Version="8.0.10" />
 	</ItemGroup>
 
 </Project>
